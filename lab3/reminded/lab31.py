@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-filenames = ['N5.txt']  
+filenames = ['N2.txt']  
 colors = ['r']  
 labels = ['N=5 ошибка 0.0284']  # ошибка 0.8   ошибка 0.162  ошибка 0.0255 в дугом случае
 

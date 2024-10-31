@@ -14,16 +14,17 @@ x = np.array(x)
 y = np.array(y)  
 
 m, b = np.polyfit(x, y, 1)
-
 y_fit = m * x + b
-
+print(b)
+y_fit = np.append(y_fit, 1e-5)
+x1 = np.append(x,( (1e-5 - b) / m))
 plt.scatter(x, y, color='blue', label='Данные')
-plt.plot(x, y_fit, color='red', label=m)
+plt.plot(x1, y_fit, color='red', label=m)
 
 plt.title('Ошибка в логарифмических осях от N')
 plt.xlabel('logN')
 plt.ylabel('logE')
 plt.legend()
+plt.grid(True)
 plt.savefig('err', dpi=300)
-plt.grid()
 plt.show()

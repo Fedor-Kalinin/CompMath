@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 filenames = ['N5.txt']  
 colors = ['r']  
@@ -7,42 +8,88 @@ labels = ['N=5 ошибка 0.0284']  # ошибка 0.8   ошибка 0.162  �
 
 plt.figure(figsize=(12, 8))  
 
-for filename, color, label in zip(filenames, colors, labels):
+
+
+def process_file(file_path, N):
     x_values = []
     y_values = []
-    with open(filename, 'r') as file:
-        data = file.readlines()
-        
-        for line in data:
-            line = line.strip()
-            if line:
-                try:
-                    x_str, y_str = line.split(',')
-                    x = float(x_str.strip())
-                    y = float(y_str.strip())
-                    x_values.append(x)
-                    y_values.append(y)
-                except ValueError:
-                    print(f"Ошибка преобразования строки: {line}")
     
-        yest = np.exp(x_values)
+
+    with open(file_path, 'r') as file:
+        for line in file:
+            parts = line.strip().split(',')
+            if len(parts) == 2:
+                x_values.append(float(parts[0]))  
+                y_values.append(float(parts[1]))  
     
+
+    exponential_values = np.exp(np.array(x_values))
+    
+
     max_diff = float('-inf')  
-    for i in range(len(yest)):
-            diff = abs(yest[i] -  y_values[i]) 
+    y_diff_value = 0
+    for i in range(len(exponential_values)):
+            diff = abs(exponential_values[i] -  y_values[i]) 
             if diff > max_diff:
-                max_diff = diff  
+                y_diff_value = (y_values[i])
+                max_diff = np.log(diff) 
+    if N == 0: 
+        xxx = math.log(2)
+    else:
+        xxx = math.log(1 / N )
+    # result = np.log(y_diff_value)      
+    # print(result)
+    # print(y_diff_value)
+    # print(math.log(2))
+    return max_diff, xxx
 
-    plt.scatter(x_values, y_values, color=color, marker='.', label=label)
-    plt.scatter(x_values, yest,marker='.' ) 
+def fit_line_least_squares(x, y):
+    
+    x = np.array(x)
+    y = np.array(y)
+    
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
 
-    print( max_diff)
+    numerator = np.sum((x - x_mean) * (y - y_mean))
+    denominator = np.sum((x - x_mean) ** 2)
+    
+    a = numerator / denominator
+    b = y_mean - a * x_mean
+    
+    return a, b
 
-plt.title('График экспоненты')
-plt.xlabel('X')
-plt.ylabel('Y')
+
+max_differences = []
+x_ydifval_values = []
+for i in range(16):
+    file_name = f'output_{i}.txt'
+    max_diff, x_ydifval = process_file(file_name, i)
+    max_differences.append(max_diff)
+    x_ydifval_values.append(x_ydifval)
+    print(f'Максимальная разность для файла {file_name}: {max_diff}, соответствующее x: {x_ydifval}')
+
+a,b = fit_line_least_squares(x_ydifval_values, max_differences)
+y1= a * np.array(x_ydifval_values) +b
+plt.plot(x_ydifval_values, y1, 'r', label=f'Линия МНК: {a}')
+
+print(f'Коэффициент наклона: {a}')
+# AAAAy = np.array([-3.5598618082100555, -10.975489813813308, -12.82169220615152,-16.153227738882006])
+# AAAAx = np.array([0.6931471805599453, 0, -0.6931471805599453, -2.3025850929940455])
+
+
+# k, b1 = fit_line_least_squares(AAAAx, AAAAy)
+plt.scatter(x_ydifval_values, max_differences, label='Данные')
+# plt.plot(AAAAx, k*AAAAx + b1, 'r', label=f'Линия МНК: {k}')
+plt.xlabel('log(len(x))')
+plt.ylabel('logERR')
+plt.title('Логорифм ошибки от логорифма длины отрезка')
 plt.legend()
-plt.savefig('exp5_1', dpi=300)
 plt.grid()
+plt.savefig('N5', dpi=300)
 plt.show()
+
+
+
+
 

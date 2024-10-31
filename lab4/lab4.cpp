@@ -2,7 +2,10 @@
 #include <type_traits>
 #include <cmath>
 #include <iostream>
+#include <fstream>
+#include <vector>
 
+    
 template<std::size_t N>
 constexpr std::array<double, N> gauss_weights() 
 {
@@ -59,7 +62,7 @@ decltype(auto) integrate(
     const typename ArgumentGetter<Callable>::Argument& end) 
 {
     using ArgType = typename ArgumentGetter<Callable>::Argument;
-    static_assert(N > 0, "N must be greater than 0");
+    static_assert(N > 0);
     
     auto weights = gauss_weights<N>();
     auto points = gauss_points<N>();
@@ -99,7 +102,47 @@ decltype(auto) integrate(
 }
 
 
-double sinys(double x) 
+double sin_function(double x) {
+    return std::sin(x);  
+}
+
+int main() 
 {
-    return std::sin(x);
+   
+    double start = 0.0;  
+    double end = 10;   
+    
+    double dx = 10;     
+
+    constexpr std::size_t N = 3;
+    for(int i = 2; i <= N; i++)
+    {
+        std::ofstream outputFile("outputN" + std::to_string(i) + ".txt");
+        
+        if (!outputFile) {
+            std::cerr << "Ошибка при создании файла output_" << i << ".txt!" << std::endl;
+            return 1;
+        }
+
+        for(float j = 0; j < dx;)
+        {
+            j += 0.1;
+            double integral_value = integrate<decltype(sin_function), N>(sin_function, start, end, j);
+            outputFile << j << ", " << integral_value << std::endl;
+        }
+        outputFile.close();
+    }
+    
+    double integral_value = integrate<decltype(sin_function), N>(sin_function, start, end, dx);
+    double integral_value1 = integrate<decltype(sin_function), N>(sin_function, start, end);
+    // double diff = integral_value - integer;
+    std::cout << integral_value <<std::endl;
+    std::cout << integral_value1 <<std::endl;
+    // std::cout << integer <<std::endl;
+    // std::cout << diff <<std::endl;
+    // std::cout<< std::log(dx) << ", "<< std::endl;
+
+    // std::cout << "Значение интеграла sin(x) от " << start << " до " << end << " равно: " << integral_value << std::endl;
+
+    return 0;
 }

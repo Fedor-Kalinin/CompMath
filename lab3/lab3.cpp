@@ -146,7 +146,7 @@ int main() {
 
 
     
-    std::ofstream outputFile("N5.txt");
+    std::ofstream outputFile("N2.txt");
 
     if (!outputFile) 
     {
@@ -159,7 +159,7 @@ int main() {
     {
         double start = intervals[i][0];
         double end = intervals[i][1];
-        size_t numPoints = 1000;
+        size_t numPoints = 1e6;
 
         generateValues(start, end, numPoints, outputFile);
     }

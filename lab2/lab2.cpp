@@ -47,8 +47,8 @@ class NewtonInterpolator {
 
 void generateValues(double start, double end, size_t numPoints, std::ofstream& outputFile) 
 {
-    std::array<double,5> xValues;
-    std::array<double,5> yValues;
+    std::array<double,3> xValues;
+    std::array<double,3> yValues;
     double step = (end - start) / numPoints;
 
     for (size_t i = 0; i < numPoints; i++) 
@@ -58,7 +58,7 @@ void generateValues(double start, double end, size_t numPoints, std::ofstream& o
         yValues.at(i) = std::exp(x);
     }
 
-    NewtonInterpolator<double,double,5> ex (xValues, yValues);
+    NewtonInterpolator<double,double,3> ex (xValues, yValues);
 
     std::array<double,1000> xValuesall;
     std::array<double,1000> yValuesall;
@@ -80,42 +80,40 @@ void generateValues(double start, double end, size_t numPoints, std::ofstream& o
 }
 
 int main() {
-    std::ofstream outputFile("N5.txt");
+     double intervals[17][2] = {
+        {0, 2},
+        {0, 1.0 / 2},
+        {0, 1.0 / 3},
+        {0, 1.0 / 4},
+        {0, 1.0 / 5},
+        {0, 1.0 / 6},
+        {0, 1.0 / 7},
+        {0, 1.0 / 8},
+        {0, 1.0 / 9},
+        {0, 1.0 / 10},
+        {0, 1.0 / 11},
+        {0, 1.0 / 12},
+        {0, 1.0 / 13},
+        {0, 1.0 / 14},
+        {0, 1.0 / 15},
+        {0, 1.0 / 16}
+    };
 
-    if (!outputFile) 
-    {
-        std::cerr << "Ошибка при создании файла!" << std::endl;
-        return 1;
-    }
-
-    double intervals[1][2] = {
-        {0, 2}};
-        // {0, 1.0 / 2},
-        // {0, 1.0 / 3},
-        // {0, 1.0 / 4},
-        // {0, 1.0 / 5},
-        // {0, 1.0 / 6},
-        // {0, 1.0 / 7},
-        // {0, 1.0 / 8},
-        // {0, 1.0 / 9},
-        // {0, 1.0 / 10},
-        // {0, 1.0 / 11},
-        // {0, 1.0 / 12},
-        // {0, 1.0 / 13},
-        // {0, 1.0 / 14},
-        // {0, 1.0 / 15},
-        // {0, 1.0 / 16}
-    // };
-
-    for (int i = 0; i < 1; ++i) 
-    {
+    for (int i = 0; i < 17; ++i) {
         double start = intervals[i][0];
         double end = intervals[i][1];
-        size_t numPoints = 5;
+        size_t numPoints = 3;
+
+        std::ofstream outputFile("outputN3_" + std::to_string(i) + ".txt");
+        
+        if (!outputFile) {
+            std::cerr << "Ошибка при создании файла output_" << i << ".txt!" << std::endl;
+            return 1;
+        }
 
         generateValues(start, end, numPoints, outputFile);
+        outputFile.close();
     }
-    outputFile.close();
 
     return 0;
 }
